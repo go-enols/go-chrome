@@ -20,6 +20,8 @@ type Browser struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 
+	AllocCtx context.Context
+
 	Monit *MonitNetWork
 
 	loop chan struct{} //事件循环锁
@@ -74,10 +76,11 @@ func NewBrowser(ctx context.Context, config Config, opt ...chromedp.ExecAllocato
 	chromeCtx, chromeCancel := chromedp.NewContext(c)
 
 	client := &Browser{
-		ctx:    chromeCtx,
-		cancel: chromeCancel,
-		Monit:  NewMonitNetWork(chromeCtx),
-		loop:   make(chan struct{}),
+		AllocCtx: c,
+		ctx:      chromeCtx,
+		cancel:   chromeCancel,
+		Monit:    NewMonitNetWork(chromeCtx),
+		loop:     make(chan struct{}),
 	}
 	if len(config.Cookies) > 0 {
 		client.SetCookies(config.Cookies)
