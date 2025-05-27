@@ -27,7 +27,7 @@ type Browser struct {
 	Config
 }
 
-func NewBrowser(ctx context.Context, config Config) *Browser {
+func NewBrowser(ctx context.Context, config Config, opt ...chromedp.ExecAllocatorOption) *Browser {
 	var opts = append(
 		chromedp.DefaultExecAllocatorOptions[:],
 		// chromedp.Flag("blink-settings", "imagesEnabled=false"), // 禁用图片
@@ -60,6 +60,7 @@ func NewBrowser(ctx context.Context, config Config) *Browser {
 	if config.Show {
 		opts = append(opts, chromedp.Flag("headless", false)) // 禁用无头模式，使浏览器可见，减少被检测为自动化工具的可能性
 	}
+	opts = append(opts, opt...)
 
 	// 设置代理如果有的话
 	if config.Proxy != "" {
