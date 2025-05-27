@@ -16,7 +16,7 @@ type Config struct {
 	Show    bool
 }
 
-type browser struct {
+type Browser struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 
@@ -27,7 +27,7 @@ type browser struct {
 	Config
 }
 
-func NewBrowser(ctx context.Context, config Config) *browser {
+func NewBrowser(ctx context.Context, config Config) *Browser {
 	var opts = append(
 		chromedp.DefaultExecAllocatorOptions[:],
 		// chromedp.Flag("blink-settings", "imagesEnabled=false"), // 禁用图片
@@ -72,7 +72,7 @@ func NewBrowser(ctx context.Context, config Config) *browser {
 	// 创建一个新的Chrome浏览器实例
 	chromeCtx, chromeCancel := chromedp.NewContext(c)
 
-	client := &browser{
+	client := &Browser{
 		ctx:    chromeCtx,
 		cancel: chromeCancel,
 		Monit:  NewMonitNetWork(chromeCtx),
@@ -85,14 +85,14 @@ func NewBrowser(ctx context.Context, config Config) *browser {
 	return client
 }
 
-func (b *browser) Close() {
+func (b *Browser) Close() {
 	if b.cancel != nil {
 		b.cancel()
 		b.cancel = nil // 防止重复调用
 	}
 }
 
-func (b *browser) Run(opt ...any) error {
+func (b *Browser) Run(opt ...any) error {
 	var actions []chromedp.Action
 	var timeOut = TimeOut
 	var ctx = b.ctx
@@ -131,7 +131,7 @@ func (b *browser) Run(opt ...any) error {
 }
 
 // 获取当前浏览器cookie
-func (b *browser) GetCookies() ([]*network.Cookie, error) {
+func (b *Browser) GetCookies() ([]*network.Cookie, error) {
 	// 获取 cookie
 	var cookies []*network.Cookie
 	err := b.Run(
@@ -153,7 +153,7 @@ func (b *browser) GetCookies() ([]*network.Cookie, error) {
 	return cookies, nil
 }
 
-func (b *browser) SetCookies(cookies []*network.Cookie) error {
+func (b *Browser) SetCookies(cookies []*network.Cookie) error {
 	return b.Run(
 		chromedp.ActionFunc(func(ctx context.Context) error {
 			// 对于每个 cookie，使用 SetCookie 设置
