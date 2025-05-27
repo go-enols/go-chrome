@@ -17,7 +17,7 @@ type Config struct {
 }
 
 type Browser struct {
-	ctx    context.Context
+	Ctx    context.Context
 	cancel context.CancelFunc
 
 	AllocCtx context.Context
@@ -77,7 +77,7 @@ func NewBrowser(ctx context.Context, config Config, opt ...chromedp.ExecAllocato
 
 	client := &Browser{
 		AllocCtx: c,
-		ctx:      chromeCtx,
+		Ctx:      chromeCtx,
 		cancel:   chromeCancel,
 		Monit:    NewMonitNetWork(chromeCtx),
 		loop:     make(chan struct{}),
@@ -99,7 +99,7 @@ func (b *Browser) Close() {
 func (b *Browser) Run(opt ...any) error {
 	var actions []chromedp.Action
 	var timeOut = TimeOut
-	var ctx = b.ctx
+	var ctx = b.Ctx
 	for _, v := range opt {
 		switch data := v.(type) {
 		case time.Duration:
